@@ -29,29 +29,92 @@ function oldScrabbleScorer(word) {
 	return letterPoints;
  }
 
-// your job is to finish writing these functions and variables that we've named //
-// don't change the names or your program won't work as expected. //
-
 function initialPrompt() {
-   console.log("Let's play some scrabble! Enter a word:");
+   let newWord = input.question("Let's play some scrabble! Enter a word: ")
+   return newWord;
 };
 
-let simpleScorer;
+let simpleScorer = function (word) {
+   word = word.toUpperCase();
+   let score = 0;
+   for (let i = 0; i < word.length; i ++) {
+      score += 1
+   }
+   return score;
+}
 
-let vowelBonusScorer;
+console.log(simpleScorer("circle"));
 
-let scrabbleScorer;
+let vowelBonusScorer = function (word) {
+   let score = 0;
+   let vowel = ['a', 'e', 'i', 'o', 'u', 'y'];
+   for (let i = 0; i < word.length; i++)
+   if (vowel.includes(word[i])) {
+      score += 3;
+   } else {
+      score += 1;
+   }
+   return score;
+}
 
-const scoringAlgorithms = [];
+//console.log(vowelBonusScorer('circle'));
 
-function scorerPrompt() {}
+let scrabbleScorer = function(word) {
+   word = word.toLowerCase();
+   let score = 0;
 
-function transform() {};
+   for (let i = 0; i < word.length; i++) {
+      let letter = word[i];
+      score += newPointStructure[letter];
+   }
+   console.log(score);
+   return score;
+};
 
-let newPointStructure;
+const scoringAlgorithms = [ 
+     {name: `Simple Score`,
+      description: `Each letter is worth 1 point.`,
+      scorerFunction: simpleScorer, }, 
+     {name: `Bonus Vowels`,
+      description: `Vowels are 3 pts, consonants are 1 pt.`,
+      scorerFunction: vowelBonusScorer, }, 
+     {name: `Scrabble`,
+      description: `The traditional scoring algorithm.`,
+      scorerFunction: scrabbleScorer, }, 
+]
+
+function scorerPrompt() {
+   console.log('Which scoring algorithm would you like to use?\n');
+   for (let i = 0; i < scoringAlgorithms.length; i++) {
+     console.log(`${i} - ${scoringAlgorithms[i].name}: ${scoringAlgorithms[i].description}`);
+   }
+ 
+   let choice = input.question('Enter 0, 1, or 2: ');
+   while (choice !== '0' && choice !== '1' && choice !== '2') {
+     console.log('Invalid input. Please enter 0, 1, or 2.');
+     choice = input.question('Enter 0, 1, or 2: ');
+   }
+ 
+   return scoringAlgorithms[Number(choice)];
+ }
+ 
+
+function transform(oldPointStructure) {
+   let newPointStructure = {};
+   for (const points in oldPointStructure) {
+      for (let i = 0; i < oldPointStructure[points].length; i ++) {
+         newPointStructure[oldPointStructure[points][i].toLowerCase()] = Number(points);
+      }
+      }
+      return newPointStructure
+};
+ 
+let newPointStructure = transform(oldPointStructure);
 
 function runProgram() {
-   initialPrompt();
+   let word = initialPrompt();
+   let scoringAlgorithm = scorerPrompt();
+   console.log(`Score for "${word}": ${scoringAlgorithm.scorerFunction(word)}`);
    
 }
 
